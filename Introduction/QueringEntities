@@ -1,0 +1,12 @@
+--There are two methods of quering entity
+  --JPQL
+    --Not Typesafe
+    --require cast when retriving from datastore
+    --run time errors on type casting
+    --does not Support  open ended parameters -- What is it?
+
+  --Criteria API
+    --allow you to define the query in the business tier of the application
+    --provide better performance because JPQL dynamic queries must be parsed each time they are called.
+    --Typesafe
+    --don't require casting

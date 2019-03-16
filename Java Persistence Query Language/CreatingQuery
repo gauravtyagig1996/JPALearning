@@ -1,0 +1,64 @@
+--Creating Queries Using the Java Persistence Query Language
+  --EntityManager.createQuery()
+  --EntityManager.createNamedQuery()
+
+--createQuery()
+  --is used to create dynamic queries
+  --defined in the business logic
+  --Ex:
+public List findWithName(String name) {
+return em.createQuery(
+  "SELECT c FROM Customer c WHERE c.name LIKE :custName")
+  .setParameter("custName", name)
+  .setMaxResults(10)
+  .getResultList();
+}
+
+
+--createNamedQuery()
+  --is used to create static queries
+  --defined in metadata by using javax.persistence.NamedQuery annotation
+  --Ex:
+
+  @NamedQuery(
+      name="findAllCustomersWithName",
+      query="SELECT c FROM Customer c WHERE c.name LIKE :custName"
+  )
+
+
+
+@PersistenceContext
+public EntityManager em;
+customers = em.createNamedQuery("findAllCustomersWithName")
+    .setParameter("custName", "Smith")
+    .getResultList();
+
+
+
+--Named Parameters in Queries
+  --query parameters prefixed with :
+  --named parameters in the query are bound to an argument by method
+    --javax.persistence.Query.setParameter(String name, Object value)
+
+public List findWithName(String userName) {
+        return em.createQuery(
+            "SELECT c FROM Customer c WHERE c.name LIKE :custName")
+            .setParameter("custName", userName)
+            .getResultList();
+}
+
+
+--Positional Parameters in Query
+  --Positional parameters are prefixed with ? followed with the numeric position of parameter in query
+  --Query.setParameter(integer position, Object value)
+
+public List findWithName(String name) {
+  return em.createQuery(
+  “SELECT c FROM Customer c WHERE c.name LIKE ?1”)
+  .setParameter(1, name)
+  .getResultList();
+}
+
+  --Inputs are numbered  starting from 1
+  --Input parameters are case sensetive
+  --Input parameters can be both used by dynamic and static queries

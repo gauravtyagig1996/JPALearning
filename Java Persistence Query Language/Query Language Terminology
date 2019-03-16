@@ -1,0 +1,9 @@
+--Abstract Schema
+  --The persistence schema abstraction over4 which queries operate
+  --query language translates queries over
+    this persistent schema abstraction into queries that are executed over
+    the database schema to which entities are mapped.
+
+--Abstract Schema Type
+  -- type to which the persistent property of an entity evaluates in
+     the abstract schema

@@ -1,0 +1,140 @@
+--EntityManager manages the entities
+--javax.persistence.EntityManager
+--Each EntityManager is associated with persistence context
+  --a set of managed entity instances that exist in particular data store
+  --defines a scope under which entity instance is created,removed,persisted etc.
+  --The EntityManager interface defines the methods that are used to interact with persistent context
+
+--EntityManager interface
+  --allows to find, create, delete the entity based on primary key
+
+--Container managed entity Manager
+  --persistence context of EntityManager instance is propogated by container to all application components
+    within JTA
+  --single persistence context
+  --@PersistenceContext
+    EntityManager em;
+
+--Application Managed Entity Managers
+  --EntityManager instance is managed by the application
+  --isolated persistence context
+  --explicit creation and destruction of persistent context
+  --Ex:
+@PersistenceUnit
+EntityManagerFactory emf;
+EntityManager em = emf.createEntityManager();
+@Resource
+UserTransaction utx;
+
+
+
+
+
+Ex1:
+@PersistenceContext
+EntityManagerFactory emf;
+EntityManager em;
+@Resource
+UserTransaction utx;
+...
+em = emf.createEntityManager();
+try {
+  utx.begin();
+  em.persist(SomeEntity);
+  em.merge(AnotherEntity);
+  em.remove(ThirdEntity);
+  utx.commit();
+} catch (Exception e) {
+  utx.rollback();
+}
+
+
+
+--Finding the entities using entity Manager
+
+Ex:
+@PersistenceContext
+EntityManager em;
+public void enterOrder(int ownerID, Car carID) {
+    Owner owner = em.find(Owner.class, carID);
+    cust.getOrders().add(newCar);
+    newOrder.setCustomer(cust);
+}
+
+
+--Managing Entity Instance Life Cycle
+  --New
+    --no persistent identity
+    --not yet associated with a persistence context.
+  --Managed
+    --persistent identity
+    --associated with a persistence context.
+  --Detached
+    -- persistent identity
+    -- not currently associated with a persistence context.
+  --Removed
+    -- persistent identity
+    --associated with a persistent context
+    --scheduled for removal from the data store
+
+--Persisting Entity Instances
+  --persist method
+  --persist operation on Cascade
+  --if entity is already managed then persist operation is ignoared
+  --If persist is called on a removed entity instance, the entity becomes managed
+  -- If the entity is detached, either persist will throw an
+    IllegalArgumentException, or the transaction commit will fail.
+
+Ex:
+@PersistenceContext
+EntityManager em;
+...
+public LineItem createLineItem(Order order, Product product,
+        int quantity) {
+    LineItem li = new LineItem(order, product, quantity);
+    order.getLineItems().add(li);
+    em.persist(li);
+    return li;
+}
+
+
+--Removing Entity Instance
+  --remove method
+  --cascading remove operation invoked from related entities that have the
+  cascade=REMOVE or cascade=ALL elements set in the relationship annotation
+  --remove is ignored on new entity
+  -- If remove is invoked on a detached entity, either remove will throw an
+   IllegalArgumentException, or the transaction commit will fail.
+  --transaction vs flushed
+
+Ex:
+public void removeOrder(Integer orderId) {
+try {
+      Order order = em.find(Order.class, orderId);
+      em.remove(order);
+}...
+
+
+--Synchronizing Entity Data to Database
+  --Synchronizing->flush() method of EntityManager instance
+  --If the entity is removed, calling flush will remove the entity data from
+    the data store.
+
+--Persistence Units
+  --set of all entity class that are managed by EntityManager instance
+  --this set represents the data contained in single data store
+  --Persistence units are defined by the persistence.xml configuration file.
+   The following is an example persistence.xml file
+  --Ex:
+  <persistence>
+    <persistence-unit name="OrderManagement">
+        <description>This unit manages orders and customers.
+            It does not rely on any vendor-specific features and can
+            therefore be deployed to any persistence provider.
+        </description>
+        <jta-data-source>jdbc/MyOrderDB</jta-data-source>
+        <jar-file>MyOrderApp.jar</jar-file>
+        <class>com.widgets.Order</class>
+        <class>com.widgets.Customer</class>
+    </persistence-unit>
+</persistence>

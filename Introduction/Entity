@@ -1,0 +1,279 @@
+--Entity is a lightweight persistence domain object
+--Entity->Table
+--Instance of Entity -> A row in a Table
+  --Employee e  = new Employee() => Entity Object
+--Persistent step can be represented
+  --Persistent Fields
+  --Persistent Property
+--Some Requirements of Entity Class
+  --The class must be annotated with javax.persistence.Entity
+  --The class must have public/protected no-arg constructor. It can have other
+    constructor as well
+  --The class, the methods in class and instance variable must not be final
+  --When I must implement Serilizable interface?
+  --persistent instance variable must be private
+
+
+--Persistent Fields or Properties must be of following data type
+Java primitive types
+java.lang.String
+Other serializable types, including:
+Wrappers of Java primitive types
+java.math.BigInteger
+java.math.BigDecimal
+java.util.Date
+java.util.Calendar
+java.sql.Date
+java.sql.Time
+java.sql.TimeStamp
+User-defined serializable types
+byte[]
+Byte[]
+char[]
+Character[]
+Enumerated types
+Other entities and/or collections of entities
+Embeddable classes
+
+
+
+--Collections  that are only used in Persistent Fields or Properties
+  --java.util.Collection
+  --java.util.Set
+  --java.util.List
+  --java.util.Map
+
+--If a field or property of an entity consists of a collection of basic types or
+  embeddable classes, use the javax.persistence.ElementCollection annotation on
+  the field or property.
+
+--@ElementCollection(targetClass = "", fetch)
+  --targetClass is optional for Java Built In Types such as String
+  --Fetch Type Defines how the object should be mapped
+-- How to use Map?
+
+
+--Validation On Persistent Field and Properties
+  --Validates the data
+  --prePersist
+  --preUpdate
+  --preRemove
+  --@Pattern.List({
+    @Pattern(regex = "", message = "")
+  })
+  --@Pattern
+  --@NotNull
+  --@Max
+  --@Min
+  --@Size()
+  --Complete List Of Validation Components
+    --https://docs.oracle.com/javaee/6/tutorial/doc/gircz.html#gkagk
+
+--Primary Keys in Entity
+    --Simple ->java.persistence.Id
+    --Composite ->jave.persistence.EmbeddedId
+--Primary Keys Must be of following data Types
+Java primitive types
+Java primitive wrapper types
+java.lang.String
+java.util.Date
+java.sql.Date
+java.math.BigDecimal
+java.math.BigInteger
+
+
+
+--Primary Class Must meet the following Requirements
+  --The access control modifier of the class must be public.
+  --The properties of the primary key class must be public or protected
+    if property-based access is used.
+  --The class must have a public default constructor.
+  --The class must implement the hashCode() and equals(Object other) methods.
+  --The class must be serializable.
+  --A composite primary key must be represented and mapped to multiple fields or
+    properties of the entity class or must be represented and mapped as an
+    embeddable class.
+  --If the class is mapped to multiple fields or properties of the entity class,
+    the names and types of the primary key fields or properties in the primary
+    key class must match those of the entity class.
+  --EX:public final class LineItemKey implements Serializable {
+    public Integer orderId;
+    public int itemId;
+
+    public LineItemKey() {}
+
+    public LineItemKey(Integer orderId, int itemId) {
+        this.orderId = orderId;
+        this.itemId = itemId;
+    }
+
+    public boolean equals(Object otherOb) {
+        if (this == otherOb) {
+            return true;
+        }
+        if (!(otherOb instanceof LineItemKey)) {
+            return false;
+        }
+        LineItemKey other = (LineItemKey) otherOb;
+        return (
+                    (orderId==null?other.orderId==null:orderId.equals
+                    (other.orderId)
+                    )
+                    &&
+                    (itemId == other.itemId)
+                );
+    }
+
+    public int hashCode() {
+        return (
+                    (orderId==null?0:orderId.hashCode())
+                    ^
+                    ((int) itemId)
+                );
+    }
+
+    public String toString() {
+        return "" + orderId + "-" + itemId;
+    }
+}
+
+
+
+--RelationShips
+  --One to One
+  --One to Many
+  --Many to One
+  --Many to Many
+--Directions in Entity RelationShips
+  --Bidirectional
+    --User knows roles
+    --Roles knows bout user
+    --Rule
+      --The inverse side of a bidirectional relationship must refer to its owning side by using the mappedBy element of the @OneToOne, @OneToMany, or @ManyToMany annotation. The mappedBy element designates the property or field in the entity that is the owner of the relationship.
+      --The many side of many-to-one bidirectional relationships must not define the mappedBy element. The many side is always the owning side of the relationship.
+      --For one-to-one bidirectional relationships, the owning side corresponds to the side that contains the corresponding foreign key.
+      --For many-to-many bidirectional relationships, either side may be the owning side.
+  --Unidiarectional RelationShips
+
+--I only follow queries based on directions: JPQL
+--Cascading
+  --ALL
+  --DETACH
+  --MERGE
+  --PERSIST
+  --REFRESH
+  --REMOVE
+
+--https://docs.oracle.com/cd/E19798-01/821-1841/bnbqm/index.html
+
+Embeddable classes
+  --@Embeddable
+  --@Embedded
+
+  --@Embeddable
+  public class Name {
+      @NotNull
+      @Size(max = 40)
+      private String firstName;
+
+      @Size(max = 40)
+      private String middleName;
+
+      @Size(max = 40)
+      private String lastName;
+
+      public Name() {
+
+      }
+
+      public Name(String firstName, String middleName, String lastName) {
+          this.firstName = firstName;
+          this.middleName = middleName;
+          this.lastName = lastName;
+      }
+
+      // Getters and Setters (Omitted for brevity)
+  }
+  --@Embeddable
+public class Address {
+    @NotNull
+    @Size(max = 100)
+    private String addressLine1;
+
+    @NotNull
+    @Size(max = 100)
+    private String addressLine2;
+
+    @NotNull
+    @Size(max = 100)
+    private String city;
+
+    @NotNull
+    @Size(max = 100)
+    private String state;
+
+    @NotNull
+    @Size(max = 100)
+    private String country;
+
+    @NotNull
+    @Size(max = 6)
+    private String zipCode;
+
+
+    public Address() {
+
+    }
+
+    public Address(String addressLine1, String addressLine2, String city,
+                   String state, String country, String zipCode) {
+        this.addressLine1 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.zipCode = zipCode;
+    }
+
+    // Getters and Setters (Omitted for brevity)
+}
+--package com.example.jpa.model;
+
+import org.hibernate.validator.constraints.Email;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Embedded
+    private Name name;
+
+    @NotNull
+    @Email
+    @Column(unique = true)
+    private String email;
+
+    @Embedded
+    @AttributeOverrides(value = {
+        @AttributeOverride(name = "addressLine1", column = @Column(name = "house_number")),
+        @AttributeOverride(name = "addressLine2", column = @Column(name = "street"))
+    })
+    private Address address;
+
+    public User() {
+
+    }
+
+    public User(Name name, String email, Address address) {
+        this.name = name;
+        this.email = email;
+        this.address = address;
+    }
+
+    // Getters and Setters (Omitted for brevity)
+}

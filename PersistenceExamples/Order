@@ -1,0 +1,13 @@
+--Entities in Order Application
+  --part
+  --vendor
+  --order
+  --lineitem
+
+--Entity RelationShips in Order Application
+  --Self Referential
+    --Part can consist od Many 
+  --One to One
+  --One to Many
+  --Many to One
+  --Unidirectional

@@ -1,0 +1,63 @@
+--Simple Queries
+  --A Basic Select Queries
+    --SELECT p FROM Player p
+    --identification variable is p
+    --optional keyword As is not needed
+  --Eliminating duplicate queries
+    --SELECT DISTINCT p from Player where p.position = ?1
+    --The players with the position specified by the query’s parameter.
+  --Using Named Parameters
+    --SELECT DISTINCT p FROM Player p WHERE  p.position = :position AND p.name = :name
+    --The players having the specified positions and names.
+
+
+--Queries that navigates to Related Entities
+  --Diffrence  between JPQL and SQL
+  --JPQL navigates where SQL joins
+    --Simple Query with RelationShips
+      --SELECT DISTINCT p FROM Player p, IN(p.teams) t
+      --All  players who belong to a team
+      --IN keyword signifies that teams is a collection of related entities
+      --Equivalent Examples
+        --SELECT DISTINCT p FROM Player p JOIN p.teams t
+        --SELECT DISTINCT p FROM Player p WHERE p.team IS NOT EMPTY
+    --Navigating to Single Valued Relationship in Fields
+      --SELECT t FROM Team t JOIN t.league l WHERE l.sport = 'soccer' OR l.sport = 'football'
+      --All the teams that are in either soccer or football league
+    --Traversing Relationship with Input Parameters
+      --SELECT DISTINCT p FROM Player p, IN(p.teams) as t WHERE t.city = :city
+      --The players whose teams belong to specified city
+    --Traversing Multiple RelationShips
+      --SELECT DISTINCT p FROM Player p, IN(p.teams) t WHERE t.league = :league
+      --The players who belong to specified league
+      --Player -> Team ->League
+    --Navigating according to related Fields
+      --SELECT DISTINCT p FROM Player p, IN (p.teams) t WHERE t.league.sport = :sport
+      --The Players who participate in specified sport
+      --Player -> Team -> League => Sport
+
+--Queries with Other conditional expressions
+  --The LIKE Expression
+    --SELECT p from Player p WHERE p.name LIKE '%saurav%'
+    --All Players contain saurav in the name Field
+  --The IS NULL Expression
+    --SELECT t FROM team t WHERE t.league IS NULL
+    --All teams who are not associated with team
+    --Check whether a relationship can be set between two entities
+  --The IS EMPTY expression
+    --SELECT p FROM  Player p WHERE p.teams IS EMPTY
+    --All Players who do not belong to any team
+    -- The teams relationship field of the Player entity is a collection. If a player does
+      not belong to a team, the teams collection is empty, and the conditional expression is TRUE.
+  --The BETWEEN expression
+    --SELECT  DISTINCT p FROM Player p WHERE p.salary BETWEEN :lowsalary AND :highsalary
+    --The Players whose salaries lie within the range of specified salary
+    --p.salary >= :lowerSalary AND p.salary <= :higherSalary
+
+--Join Examples
+  --SELECT c FROM Customer c JOIN c.orders o WHERE c.status = 1 AND o.totalPrice > 10000
+  --SELECT c FROM Customer c INNER JOIN c.orders o WHERE c.status = 1 AND o.totalPrice > 10000
+  --SELECT c FROM Customer c, IN(c.orders) o WHERE c.status = 1 AND o.totalPrice > 10000  =>In Operator
+  --SELECT t FROM Team t JOIN t.league l WHERE l.sport = :sport
+  --SELECT c.name, o.totalPrice FROM Order o LEFT JOIN o.customer c
+  --SELECT d FROM Department d LEFT JOIN FETCH d.employees WHERE d.deptno = 1

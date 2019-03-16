@@ -1,0 +1,34 @@
+--Select Statements
+  --Select Query has 6 clauses
+    --SELECT: Type of objects or values returned by the Query
+    --FROM :
+      ->Defines scope of the query
+      ->One or More identification variables
+      ->can be referenced in select and where clause
+      ->identification represents one of the following
+        ->The abstract schema name of Entity
+        ->An element of collection relationship
+        ->An element of a single valued relationship
+        ->A member of a collection that is multiple side of one to many relationship
+
+    --WHERE :
+      ->condition expression that restricts the  object or values retrieved by the
+      ->where clause is optional
+    --GROUP BY
+      ->groups query results according to a set of properties
+    --HAVING
+      ->Used with Group By clause
+      ->restricts the query result according to conditional properties
+    --ORDERBY
+      --Sorts the Object or Values
+  --SELECT and FROM clauses are required
+  --Syntax: QL_statement::= select_clause from_clause [where_clause][groupby_clause][having_clause][orderby_clause]
+
+
+
+
+--Update or Delete Statements
+  --Update and delete statements provide the bulk operations over set of entities to be updated or deleted
+  --Syntax:
+    --update_statement :: = update_clause [where_clause]
+    --delete_statement :: = delete_clause [where_clause]
